@@ -156,7 +156,7 @@ bool ISL1208_RTC::setTime(String timeString) {
       #endif
 
       timeString.remove(0,1); //remove 'T'
-      timeString.remove(14); //remove delimiter '#'
+      timeString.remove(15); //remove delimiter '#'
 
       yearValue = byte((timeString.substring(0, 2)).toInt()); //convert string values to decimals
       monthValue = byte((timeString.substring(2, 4)).toInt());
