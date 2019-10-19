@@ -193,9 +193,11 @@ bool ISL1208_RTC::setTime(String timeString) {
       //write to time register
       Wire.beginTransmission(ISL1208_ADDRESS); //send the I2C address of RTC
       Wire.write(ISL1208_SC); //starting address of time register
+      Wire.write(decToBcd(dayValue));
+
       Wire.write(decToBcd(secondValue)); //convert the dec value to BCD ans send
       Wire.write(decToBcd(minuteValue));
-
+      
       hourValue = decToBcd(hourValue); //convert to BCD
       if(periodValue == 1) hourValue |= B00100000; //if PM (1 = PM)
       else hourValue &= B00011111; //if AM (0 = AM)
