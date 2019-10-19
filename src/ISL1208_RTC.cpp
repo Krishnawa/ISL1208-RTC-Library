@@ -38,7 +38,7 @@ void ISL1208_RTC::begin() {
   minuteValue =  0;
   secondValue = 0;
   periodValue = 0;
-
+  dayValue = 0;
   secondValueAlarm = 0;
   minuteValueAlarm = 0;
   hourValueAlarm = 0;
@@ -108,6 +108,7 @@ bool ISL1208_RTC::updateTime() {
     //write to time register
     Wire.beginTransmission(ISL1208_ADDRESS); //send the I2C address of RTC
     Wire.write(ISL1208_SC); //starting address of time register
+    Wire.write(decToBcd(dayValue)); //convert the dec value to BCD ans send
     Wire.write(decToBcd(secondValue)); //convert the dec value to BCD ans send
     Wire.write(decToBcd(minuteValue));
 
@@ -135,7 +136,7 @@ bool ISL1208_RTC::setTime(String timeString) {
     return false;
   }
 
-  if(timeString.length() != 15) { //chek if time inputs are valid
+  if(timeString.length() != 16) { //chek if time inputs are valid
     Serial.flush();
     Serial.print(F("Invalid time input - "));
     Serial.print(timeString);
@@ -145,7 +146,7 @@ bool ISL1208_RTC::setTime(String timeString) {
   }
 
   else {
-    //Time format is : T1712241030421#
+    //Time format is : T17122410304210#
     if(timeString.charAt(0) == 'T') { //update time register
 
       #ifdef ISL1208_RTC_DEBUG
@@ -163,7 +164,8 @@ bool ISL1208_RTC::setTime(String timeString) {
       hourValue = byte((timeString.substring(6, 8)).toInt());
       minuteValue = byte((timeString.substring(8, 10)).toInt());
       secondValue = byte((timeString.substring(10, 12)).toInt());
-      periodValue = byte((timeString.substring(12)).toInt());
+      periodValue = byte((timeString.substring(12,13)).toInt());
+      dayValue = byte((timeString.substring(13)).toInt());
 
       #ifdef ISL1208_RTC_DEBUG
         Serial.print(F("Date and Time is "));
@@ -182,6 +184,10 @@ bool ISL1208_RTC::setTime(String timeString) {
         Serial.print(monthValue);
         Serial.print(F("-"));
         Serial.println(yearValue);
+        Serial.print(F("Day :"));
+        Serial.println(dayValue);
+
+
       #endif
 
       //write to time register
